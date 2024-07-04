@@ -12,6 +12,7 @@
   "dependencies": {
     "log4js": "^6.9.1",
     "reflect-metadata": "^0.1.14",
+    "tsyringe": "^4.8.0",
     "vk-io": "^4.9.1"
   },
   "devDependencies": {
