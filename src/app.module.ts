@@ -2,14 +2,24 @@ import {Global, Module} from '@nestjs/common'
 import {ConfigModule, ConfigService} from '@nestjs/config'
 import {RedisStorage} from 'vk-io-redis-storage'
 import {SessionManager} from '@vk-io/session'
+import {TypeOrmModule} from '@nestjs/typeorm'
 import {VkModule} from 'nestjs-vk'
 
-import UserModule from './user/user.module'
+import {ActionModule} from './action/action.module'
+import {UserModule} from './user/user.module'
+
+import {User} from './user/user.entity'
+import {Action} from './action/action.entity'
 
 @Global()
 @Module({
   imports: [
     ConfigModule.forRoot({isGlobal: true, envFilePath: '.env'}),
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: 'dayvinchik',
+      entities: [User, Action]
+    }),
     VkModule.forManagers({
       useSessionManager: new SessionManager({
         storage: new RedisStorage({
@@ -33,10 +43,10 @@ import UserModule from './user/user.module'
           apiMode: 'parallel'
         },
         notReplyMessage: true,
-        include: [UserModule]
+        include: [UserModule, ActionModule]
       })
     }),
-    UserModule
+    UserModule, ActionModule
   ]
 })
 export class AppModule {}

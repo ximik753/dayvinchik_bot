@@ -8,4 +8,4 @@ import UserScene from './scenes/user.scene'
 @Module({
   providers: [UserSettingsScene, UserScene, UserUpdate, UserService]
 })
-export default class UserModule {}
+export class UserModule {}
