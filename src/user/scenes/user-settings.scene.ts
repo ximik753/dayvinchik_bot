@@ -5,10 +5,17 @@ import {UseFilters} from '@nestjs/common'
 
 import {USER_MAIN_SCENE, USER_PROFILE_SETTINGS_SCENE} from '../user.constants'
 import {VkExceptionFilter} from '../../common'
+import {UserService} from '../user.service'
+import {UserUpdateDto} from '../dto/user-update.dto'
+import {SexType, User} from '../user.entity'
 
 @UseFilters(VkExceptionFilter)
 @Scene(USER_PROFILE_SETTINGS_SCENE)
 export default class UserSettingsScene {
+  constructor(
+    private _userService: UserService
+  ) {}
+
   @SceneEnter()
   async onSceneEnter(@Ctx() ctx: MessageContext) {
     const step = ctx.scene.state.step
@@ -31,7 +38,10 @@ export default class UserSettingsScene {
       return ctx.send(`Введен не корректный возраст`)
     }
 
-    ctx.scene.state.profile.age = parsedAge
+    const userDto = new UserUpdateDto()
+    userDto.id = ctx.senderId
+    userDto.age = parsedAge
+    await this._userService.update(userDto)
 
     await ctx.scene.step.next()
   }
@@ -40,8 +50,8 @@ export default class UserSettingsScene {
   async onSexInput(@Ctx() ctx: MessageContext) {
     if (ctx.scene.step.firstTime) {
       const keyboard = new KeyboardBuilder()
-        .textButton({label: 'Я парень', color: ButtonColor.NEGATIVE, payload: {sex: 0}})
-        .textButton({label: 'Я девушка', color: ButtonColor.POSITIVE, payload: {sex: 1}})
+        .textButton({label: 'Я парень', color: ButtonColor.NEGATIVE, payload: {sex: SexType.MALE}})
+        .textButton({label: 'Я девушка', color: ButtonColor.POSITIVE, payload: {sex: SexType.GIRL}})
       return ctx.send('Теперь определимся с полом', {keyboard})
     }
 
@@ -54,7 +64,10 @@ export default class UserSettingsScene {
       `)
     }
 
-    ctx.scene.state.profile.sex = ctx.messagePayload.sex
+    const userDto = new UserUpdateDto()
+    userDto.id = ctx.senderId
+    userDto.sex = ctx.messagePayload.sex
+    await this._userService.update(userDto)
 
     await ctx.scene.step.next()
   }
@@ -63,9 +76,9 @@ export default class UserSettingsScene {
   async onSexSearchInput(@Ctx() ctx: MessageContext) {
     if (ctx.scene.step.firstTime) {
       const keyboard = new KeyboardBuilder()
-        .textButton({label: 'Парни', color: ButtonColor.NEGATIVE, payload: {sexSearch: 0}})
-        .textButton({label: 'Девушки', color: ButtonColor.POSITIVE, payload: {sexSearch: 1}})
-        .textButton({label: 'Всё равно', color: ButtonColor.PRIMARY, payload: {sexSearch: 2}})
+        .textButton({label: 'Парни', color: ButtonColor.NEGATIVE, payload: {sexSearch: SexType.MALE}})
+        .textButton({label: 'Девушки', color: ButtonColor.POSITIVE, payload: {sexSearch: SexType.GIRL}})
+        .textButton({label: 'Всё равно', color: ButtonColor.PRIMARY, payload: {sexSearch: SexType.ANY_WHERE}})
       return ctx.send('Кто тебе интересен?', {keyboard})
     }
 
@@ -79,7 +92,10 @@ export default class UserSettingsScene {
       `)
     }
 
-    ctx.scene.state.profile.sexSearch = ctx.messagePayload.sexSearch
+    const userDto = new UserUpdateDto()
+    userDto.id = ctx.senderId
+    userDto.sexSearch = ctx.messagePayload.sexSearch
+    await this._userService.update(userDto)
 
     await ctx.scene.step.next()
   }
@@ -90,7 +106,10 @@ export default class UserSettingsScene {
       return ctx.send('Из какого ты города?', {keyboard: new KeyboardBuilder()})
     }
 
-    ctx.scene.state.profile.city = ctx.text
+    const userDto = new UserUpdateDto()
+    userDto.id = ctx.senderId
+    userDto.city = ctx.text
+    await this._userService.update(userDto)
 
     await ctx.scene.step.next()
   }
@@ -101,7 +120,10 @@ export default class UserSettingsScene {
       return ctx.send('Как мне тебя называть?')
     }
 
-    ctx.scene.state.profile.name = ctx.text
+    const userDto = new UserUpdateDto()
+    userDto.id = ctx.senderId
+    userDto.name = ctx.text
+    await this._userService.update(userDto)
 
     await ctx.scene.step.next()
   }
@@ -121,7 +143,10 @@ export default class UserSettingsScene {
       return ctx.scene.step.next()
     }
 
-    ctx.scene.state.profile.about = ctx.text
+    const userDto = new UserUpdateDto()
+    userDto.id = ctx.senderId
+    userDto.about = ctx.text
+    await this._userService.update(userDto)
 
     if (ctx.scene.state.step) {
       return ctx.scene.step.go(7)
@@ -139,8 +164,11 @@ export default class UserSettingsScene {
       return ctx.send('Пришли свое фото, его будут видеть другие пользователи')
     }
 
+    const userDto = new UserUpdateDto()
+    userDto.id = ctx.senderId
     // @ts-ignore
-    ctx.scene.state.profile.photo = ctx.attachments[0].payload.orig_photo.url
+    userDto.photo = ctx.attachments[0].payload.orig_photo.url
+    await this._userService.update(userDto)
 
     if (ctx.scene.state.step) {
       return ctx.scene.step.go(7)
@@ -151,14 +179,14 @@ export default class UserSettingsScene {
   @AddStep(7)
   async onConfirmation(@Ctx() ctx: MessageContext) {
     if (ctx.scene.step.firstTime) {
-      const {age, photo, city, about = '', name}  = ctx.scene.state.profile
+      const {age, photo, city, about = '', name}  = await this._userService.findOneById(ctx.senderId) as User
       const profile = `
       Так выглядит твоя анкета:
       
       ${name}, ${age}, ${city}
-      ${about}
+      ${about || ''}
       `
-      await ctx.sendPhotos({value: photo}, {message: profile})
+      await ctx.sendPhotos({value: photo!}, {message: profile})
 
       const keyboard = new KeyboardBuilder()
         .textButton({label: 'Всё верно', color: ButtonColor.NEGATIVE, payload: {value: 0}})

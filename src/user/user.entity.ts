@@ -12,26 +12,26 @@ export class User {
   @PrimaryColumn()
   id: number
 
-  @Column()
-  photo: string
+  @Column({nullable: true})
+  photo?: string
 
-  @Column()
+  @Column({nullable: true})
   about?: string
 
-  @Column()
-  age: number
+  @Column({nullable: true})
+  age?: number
 
-  @Column()
-  name: string
+  @Column({nullable: true})
+  name?: string
 
-  @Column()
-  city: string
+  @Column({nullable: true})
+  city?: string
 
-  @Column()
-  sex: SexType
+  @Column({nullable: true})
+  sex?: SexType
 
-  @Column()
-  sexSearch: SexType
+  @Column({nullable: true})
+  sexSearch?: SexType
 
   @OneToMany(type => Action, action => action.targetId)
   actionTargets: number[]

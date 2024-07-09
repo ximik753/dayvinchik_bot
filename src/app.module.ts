@@ -18,7 +18,8 @@ import {Action} from './action/action.entity'
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'dayvinchik',
-      entities: [User, Action]
+      entities: [User, Action],
+      synchronize: true,
     }),
     VkModule.forManagers({
       useSessionManager: new SessionManager({
