@@ -1,14 +1,14 @@
 import {TypeOrmModule} from '@nestjs/typeorm'
 import {Module} from '@nestjs/common'
 
-import UserSettingsScene from './scenes/user-settings.scene'
-import UserUpdate from './user.update'
+import {UserQuestionnaireChangingScene} from './scenes/user-questionnaire-changing.scene'
+import {UserQuestionnaireSettingsScene} from './scenes/user-questionnaire-settings.scene'
 import {UserService} from './user.service'
-import UserScene from './scenes/user.scene'
+import UserUpdate from './user.update'
 import {User} from './user.entity'
 
 @Module({
-  providers: [UserSettingsScene, UserScene, UserUpdate, UserService],
+  providers: [UserQuestionnaireChangingScene, UserQuestionnaireSettingsScene, UserUpdate, UserService],
   imports: [TypeOrmModule.forFeature([User])],
   exports: [TypeOrmModule]
 })

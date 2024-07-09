@@ -2,12 +2,12 @@ import {UseFilters} from '@nestjs/common'
 import {ButtonColor, KeyboardBuilder, MessageContext} from 'vk-io'
 import {AddStep, Ctx, Scene} from 'nestjs-vk'
 
-import {USER_MAIN_SCENE, USER_PROFILE_SETTINGS_SCENE} from '../user.constants'
+import {USER_QUESTIONNAIRE_SETTINGS_SCENE, USER_QUESTIONNAIRE_CHANGING_SCENE} from '../user.constants'
 import {VkExceptionFilter} from '../../common'
 
 @UseFilters(VkExceptionFilter)
-@Scene(USER_MAIN_SCENE)
-export default class UserScene {
+@Scene(USER_QUESTIONNAIRE_SETTINGS_SCENE)
+export class UserQuestionnaireSettingsScene {
   @AddStep(0)
   async onInit(@Ctx() ctx: MessageContext) {
     const messageText = `
@@ -33,15 +33,15 @@ export default class UserScene {
     }
 
     if (ctx.messagePayload.createNew) {
-      return ctx.scene.enter(USER_PROFILE_SETTINGS_SCENE, {state: {profile: {}}})
+      return ctx.scene.enter(USER_QUESTIONNAIRE_CHANGING_SCENE, {state: {profile: {}}})
     }
 
     if (ctx.messagePayload.changePhoto) {
-      return ctx.scene.enter(USER_PROFILE_SETTINGS_SCENE, {state: {profile: ctx.scene.state.profile, step: 6}})
+      return ctx.scene.enter(USER_QUESTIONNAIRE_CHANGING_SCENE, {state: {profile: ctx.scene.state.profile, step: 6}})
     }
 
     if (ctx.messagePayload.changeAbout) {
-      return ctx.scene.enter(USER_PROFILE_SETTINGS_SCENE, {state: {profile: ctx.scene.state.profile, step: 5}})
+      return ctx.scene.enter(USER_QUESTIONNAIRE_CHANGING_SCENE, {state: {profile: ctx.scene.state.profile, step: 5}})
     }
 
     if (ctx.messagePayload.search) {

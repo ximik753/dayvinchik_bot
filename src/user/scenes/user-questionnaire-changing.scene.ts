@@ -3,15 +3,15 @@ import {ButtonColor, KeyboardBuilder, MessageContext} from 'vk-io'
 import {IStepContext} from '@vk-io/scenes'
 import {UseFilters} from '@nestjs/common'
 
-import {USER_MAIN_SCENE, USER_PROFILE_SETTINGS_SCENE} from '../user.constants'
+import {USER_QUESTIONNAIRE_SETTINGS_SCENE, USER_QUESTIONNAIRE_CHANGING_SCENE} from '../user.constants'
 import {VkExceptionFilter} from '../../common'
 import {UserService} from '../user.service'
 import {UserUpdateDto} from '../dto/user-update.dto'
 import {SexType, User} from '../user.entity'
 
 @UseFilters(VkExceptionFilter)
-@Scene(USER_PROFILE_SETTINGS_SCENE)
-export default class UserSettingsScene {
+@Scene(USER_QUESTIONNAIRE_CHANGING_SCENE)
+export class UserQuestionnaireChangingScene {
   constructor(
     private _userService: UserService
   ) {}
@@ -203,6 +203,6 @@ export default class UserSettingsScene {
       `)
     }
 
-    await ctx.scene.enter(USER_MAIN_SCENE, {state: {profile: ctx.scene.state.profile}})
+    await ctx.scene.enter(USER_QUESTIONNAIRE_SETTINGS_SCENE, {state: {profile: ctx.scene.state.profile}})
   }
 }
