@@ -33,7 +33,7 @@ export class UserService {
       .where('(user.sex = :sex OR 2 = :sex)', {sex: currentUser.sexSearch})
       .andWhere('user.city = :city', {city: userForOwnerCity ? currentUser.city : undefined})
       .andWhere('user.id != :id', {id: currentUser.id})
-      .andWhere(':minAge < user.age < :maxAge', {minAge: currentUser.age! - 2, maxAge: currentUser.age! + 2})
+      .andWhere(':minAge <= user.age <= :maxAge', {minAge: currentUser.age! - 2, maxAge: currentUser.age! + 2})
       .andWhere('user.isActive = true')
       .andWhere('action.ownerId is null')
       .getMany()
