@@ -21,6 +21,9 @@ export class Action {
   @Column()
   type: ActionType
 
+  @Column({nullable: true})
+  message: string
+
   @Column()
   isReading: boolean
 }

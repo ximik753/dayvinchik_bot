@@ -10,6 +10,6 @@ import {User} from './user.entity'
 @Module({
   providers: [UserQuestionnaireChangingScene, UserQuestionnaireSettingsScene, UserUpdate, UserService],
   imports: [TypeOrmModule.forFeature([User])],
-  exports: [TypeOrmModule]
+  exports: [TypeOrmModule, UserService]
 })
 export class UserModule {}
