@@ -1,5 +1,7 @@
 import {Global, Module} from '@nestjs/common'
+import {ioRedisStore} from '@tirke/node-cache-manager-ioredis'
 import {ConfigModule, ConfigService} from '@nestjs/config'
+import {CacheModule} from '@nestjs/cache-manager'
 import {RedisStorage} from 'vk-io-redis-storage'
 import {SessionManager} from '@vk-io/session'
 import {TypeOrmModule} from '@nestjs/typeorm'
@@ -7,14 +9,17 @@ import {VkModule} from 'nestjs-vk'
 
 import {ActionModule} from './action/action.module'
 import {UserModule} from './user/user.module'
-
-import {User} from './user/user.entity'
 import {Action} from './action/action.entity'
+import {User} from './user/user.entity'
 
 @Global()
 @Module({
   imports: [
     ConfigModule.forRoot({isGlobal: true, envFilePath: '.env'}),
+    CacheModule.register({
+      store: ioRedisStore,
+      isGlobal: true
+    }),
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'dayvinchik',
