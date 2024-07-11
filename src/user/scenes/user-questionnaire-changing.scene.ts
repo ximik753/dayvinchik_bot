@@ -1,4 +1,4 @@
-import {AddStep, Context, Ctx, Scene, SceneEnter} from 'nestjs-vk'
+import {AddStep, Context, Ctx, Scene, SceneEnter, SceneLeave} from 'nestjs-vk'
 import {ButtonColor, KeyboardBuilder, MessageContext} from 'vk-io'
 import {IStepContext} from '@vk-io/scenes'
 import {UseFilters} from '@nestjs/common'
@@ -22,6 +22,21 @@ export class UserQuestionnaireChangingScene {
     if (ctx.scene.step.firstTime && step) {
       ctx.scene.step.stepId = step
     }
+
+    if (ctx.scene.step.firstTime) {
+      const userDto = new UserUpdateDto()
+      userDto.id = ctx.senderId
+      userDto.isActive = false
+      await this._userService.update(userDto)
+    }
+  }
+
+  @SceneLeave()
+  async onSceneLeave(@Ctx() ctx: MessageContext) {
+    const userDto = new UserUpdateDto()
+    userDto.id = ctx.senderId
+    userDto.isActive = true
+    await this._userService.update(userDto)
   }
 
   @AddStep(0)

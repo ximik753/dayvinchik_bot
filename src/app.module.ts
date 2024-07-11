@@ -19,7 +19,7 @@ import {Action} from './action/action.entity'
       type: 'sqlite',
       database: 'dayvinchik',
       entities: [User, Action],
-      synchronize: true,
+      synchronize: true
     }),
     VkModule.forManagers({
       useSessionManager: new SessionManager({

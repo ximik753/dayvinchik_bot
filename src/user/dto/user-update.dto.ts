@@ -3,6 +3,8 @@ import {SexType} from '../user.entity'
 export class UserUpdateDto {
   id: number
 
+  isActive?: boolean
+
   photo?: string
 
   about?: string

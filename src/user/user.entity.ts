@@ -33,6 +33,9 @@ export class User {
   @Column({nullable: true})
   sexSearch?: SexType
 
+  @Column({default: false})
+  isActive: boolean
+
   @OneToMany(type => Action, action => action.targetId)
   actionTargets: number[]
 
