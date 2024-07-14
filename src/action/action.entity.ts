@@ -24,6 +24,6 @@ export class Action {
   @Column({nullable: true})
   message: string
 
-  @Column()
+  @Column({default: false})
   isReading: boolean
 }

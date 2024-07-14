@@ -5,7 +5,7 @@ import {Repository} from 'typeorm'
 import {VK} from 'vk-io'
 
 import {UserUpdateDto} from './dto/user-update.dto'
-import {Action} from '../action/action.entity'
+import {Action, ActionType} from '../action/action.entity'
 import {User} from './user.entity'
 
 @Injectable()
@@ -35,7 +35,7 @@ export class UserService {
     return this._userRepository.createQueryBuilder('user')
       .leftJoinAndSelect(Action, 'action', 'user.id = action.targetId')
       .where('(user.sex = :sex OR 2 = :sex)', {sex: currentUser.sexSearch})
-      .andWhere('user.city = :city', {city: userForOwnerCity ? currentUser.city : undefined})
+      .andWhere(userForOwnerCity ? 'user.city = :city' : 'user.city != :city', {city: currentUser.city})
       .andWhere('user.id != :id', {id: currentUser.id})
       .andWhere(':minAge <= user.age <= :maxAge', {minAge: currentUser.age! - 2, maxAge: currentUser.age! + 2})
       .andWhere('user.isActive = true')

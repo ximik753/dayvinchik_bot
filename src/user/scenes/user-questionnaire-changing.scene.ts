@@ -3,7 +3,7 @@ import {ButtonColor, KeyboardBuilder, MessageContext} from 'vk-io'
 import {IStepContext} from '@vk-io/scenes'
 import {UseFilters} from '@nestjs/common'
 
-import {USER_QUESTIONNAIRE_SETTINGS_SCENE, USER_QUESTIONNAIRE_CHANGING_SCENE} from '../user.constants'
+import {USER_QUESTIONNAIRE_CHANGING_SCENE, USER_QUESTIONNAIRE_SETTINGS_SCENE} from '../user.constants'
 import {ACTION_SCENE} from '../../action/action.constats'
 import {UserUpdateDto} from '../dto/user-update.dto'
 import {VkExceptionFilter} from '../../common'
