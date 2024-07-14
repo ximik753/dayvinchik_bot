@@ -173,17 +173,29 @@ export class UserQuestionnaireChangingScene {
   @AddStep(6)
   async onPhotoInput(@Ctx() ctx: MessageContext) {
     if (ctx.scene.step.firstTime) {
-      return ctx.send('Теперь пришли свое фото, его будут видеть другие пользователи', {keyboard: new KeyboardBuilder()})
+      const keyboard = new KeyboardBuilder()
+        .textButton({label: 'Взять моё основное фото из ВК.', color: ButtonColor.PRIMARY, payload: {takeFromVk: true}})
+      return ctx.send('Теперь пришли свое фото, его будут видеть другие пользователи', {keyboard})
     }
 
-    if (!ctx.hasAttachments()) {
+    const takeFormVk = ctx.hasMessagePayload
+
+    if (!ctx.hasAttachments() && !takeFormVk) {
       return ctx.send('Пришли свое фото, его будут видеть другие пользователи')
+    }
+
+    let photoFromVk
+    if (takeFormVk) {
+      const userInfo = await this._userService.getUserInfoFromVk(ctx.senderId)
+      photoFromVk = userInfo.photo_max_orig
     }
 
     const userDto = new UserUpdateDto()
     userDto.id = ctx.senderId
-    // @ts-ignore
-    userDto.photo = ctx.attachments[0].payload.orig_photo.url
+    userDto.photo = takeFormVk
+      ? photoFromVk
+        // @ts-ignore
+      : ctx.attachments[0].payload.orig_photo.url
     await this._userService.update(userDto)
 
     if (ctx.scene.state.step) {

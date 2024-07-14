@@ -1,6 +1,8 @@
 import {InjectRepository} from '@nestjs/typeorm'
 import {Injectable} from '@nestjs/common'
+import {InjectVkApi} from 'nestjs-vk'
 import {Repository} from 'typeorm'
+import {VK} from 'vk-io'
 
 import {UserUpdateDto} from './dto/user-update.dto'
 import {Action} from '../action/action.entity'
@@ -10,7 +12,9 @@ import {User} from './user.entity'
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private _userRepository: Repository<User>
+    private _userRepository: Repository<User>,
+    // @ts-ignore
+    @InjectVkApi() private readonly vk: VK
   ) {}
 
   async update(user: UserUpdateDto) {
@@ -37,5 +41,13 @@ export class UserService {
       .andWhere('user.isActive = true')
       .andWhere('action.ownerId is null')
       .getMany()
+  }
+
+  async getUserInfoFromVk(userId: number) {
+    const usersGetResponse = await this.vk.api.users.get({
+      user_ids: [userId],
+      fields: ['photo_max_orig']
+    })
+    return usersGetResponse[0]
   }
 }
