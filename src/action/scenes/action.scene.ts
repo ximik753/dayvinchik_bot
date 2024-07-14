@@ -2,17 +2,18 @@ import {ButtonColor, KeyboardBuilder, MessageContext} from 'vk-io'
 import {AddStep, Ctx, Scene} from 'nestjs-vk'
 import {UseFilters} from '@nestjs/common'
 
+import {UserService} from '../../user/user.service'
 import {ACTION_SCENE} from '../action.constats'
 import {ActionService} from '../action.service'
 import {VkExceptionFilter} from '../../common'
 import {ActionType} from '../action.entity'
-import {levels} from 'log4js'
 
 @UseFilters(VkExceptionFilter)
 @Scene(ACTION_SCENE)
 export class ActionScene {
   constructor(
     private readonly _actionService: ActionService,
+    private readonly _userService: UserService,
   ) {}
 
   @AddStep(0)
@@ -54,13 +55,9 @@ export class ActionScene {
       .textButton({label: '💌', color: ButtonColor.POSITIVE, payload: {value: 1, target: nextUser.id}})
       .textButton({label: '👎', color: ButtonColor.NEGATIVE, payload: {value: 2, target: nextUser.id}})
       .textButton({label: '💤', color: ButtonColor.PRIMARY, payload: {value: 3}})
-    const {age, photo, city, about = '', name} = nextUser
 
-    const profile = `
-      ${name}, ${age}, ${city}
-      ${about || ''}
-    `
-    await ctx.sendPhotos({value: photo!}, {message: profile, keyboard})
+    const profile = this._userService.getQuestionnaireText(nextUser)
+    await ctx.sendPhotos({value: nextUser.photo!}, {message: profile, keyboard})
   }
 
   @AddStep(1)
@@ -138,8 +135,7 @@ export class ActionScene {
         message: `
         Кому-то понравилась твоя анкета${hasMoreLike ? `(и ещё ${likesCount - 1})` : ''}:
         
-        ${like.name}, ${like.age}, ${like.city}
-        ${like.about || ''}
+        ${this._userService.getQuestionnaireText(like)}
         `,
         keyboard
       }

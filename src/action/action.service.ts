@@ -153,8 +153,7 @@ export class ActionService {
       message: `
       Есть взаимная симпатия! Добавляй в друзья - vk.com/id${ownerId}
       
-      ${likedUser.name}, ${likedUser.age}, ${likedUser.city}
-      ${likedUser.about || ''}
+      ${this._userService.getQuestionnaireText(likedUser)}
       `,
       random_id: getRandomId(),
       attachment: `photo${profilePhoto.ownerId}_${profilePhoto.id}`,

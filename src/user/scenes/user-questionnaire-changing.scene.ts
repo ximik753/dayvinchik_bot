@@ -207,14 +207,13 @@ export class UserQuestionnaireChangingScene {
   @AddStep(7)
   async onConfirmation(@Ctx() ctx: MessageContext) {
     if (ctx.scene.step.firstTime) {
-      const {age, photo, city, about = '', name} = await this._userService.findOneById(ctx.senderId) as User
+      const userProfile = await this._userService.findOneById(ctx.senderId) as User
       const profile = `
       Так выглядит твоя анкета:
       
-      ${name}, ${age}, ${city}
-      ${about || ''}
+      ${this._userService.getQuestionnaireText(userProfile)}
       `
-      await ctx.sendPhotos({value: photo!}, {message: profile})
+      await ctx.sendPhotos({value: userProfile.photo!}, {message: profile})
 
       const keyboard = new KeyboardBuilder()
         .textButton({label: 'Всё верно', color: ButtonColor.NEGATIVE, payload: {value: 0}})

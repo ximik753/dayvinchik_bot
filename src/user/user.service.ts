@@ -50,4 +50,11 @@ export class UserService {
     })
     return usersGetResponse[0]
   }
+
+  getQuestionnaireText(user: User) {
+    return `
+    ${user.name}, ${user.age}, ${user.city}
+    ${user.about || ''}
+    `
+  }
 }
