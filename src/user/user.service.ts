@@ -5,7 +5,7 @@ import {Repository} from 'typeorm'
 import {VK} from 'vk-io'
 
 import {UserUpdateDto} from './dto/user-update.dto'
-import {Action, ActionType} from '../action/action.entity'
+import {Action} from '../action/action.entity'
 import {User} from './user.entity'
 
 @Injectable()
@@ -19,6 +19,13 @@ export class UserService {
 
   async update(user: UserUpdateDto) {
     await this._userRepository.save(user)
+  }
+
+  async toggleActiveProfile(userId: number) {
+    const {isActive} = await this.findOneById(userId) as User
+    await this._userRepository.update({
+      id: userId
+    }, {isActive: !isActive})
   }
 
   async findOneById(userId: number) {

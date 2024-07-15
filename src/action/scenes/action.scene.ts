@@ -2,6 +2,7 @@ import {ButtonColor, KeyboardBuilder, MessageContext} from 'vk-io'
 import {AddStep, Ctx, Scene} from 'nestjs-vk'
 import {UseFilters} from '@nestjs/common'
 
+import {USER_WAIT_LIKE_SCENE} from '../../user/user.constants'
 import {UserService} from '../../user/user.service'
 import {ACTION_SCENE} from '../action.constats'
 import {ActionService} from '../action.service'
@@ -39,7 +40,7 @@ export class ActionScene {
       }
 
       if (value === 3) {
-        return ctx.scene.step.go(2)
+        return ctx.scene.enter(USER_WAIT_LIKE_SCENE)
       }
     }
 
@@ -47,7 +48,7 @@ export class ActionScene {
     const nextUser = await this._actionService.findNext(senderId)
 
     if (!nextUser) {
-      return ctx.scene.step.go(3)
+      return ctx.scene.step.go(2)
     }
 
     const keyboard = new KeyboardBuilder()
@@ -85,13 +86,11 @@ export class ActionScene {
   }
 
   @AddStep(2)
-  async onSleep(@Ctx() ctx: MessageContext) {}
-
-  @AddStep(3)
   async onQuestionnaireEnd(@Ctx() ctx: MessageContext) {
     if (ctx.scene.step.firstTime) {
       const keyboard = new KeyboardBuilder()
         .textButton({label: 'Начать поиск', color: ButtonColor.POSITIVE, payload: {value: 0}})
+        .textButton({label: '💤', color: ButtonColor.PRIMARY, payload: {value: 1}})
       return ctx.send('Анкеты закончились. Приходите позже', {keyboard})
     }
 
@@ -99,10 +98,13 @@ export class ActionScene {
       return ctx.send('Нет такого варианта ответа')
     }
 
-    return ctx.scene.step.go(0)
+    if (ctx.messagePayload.value === 0) {
+      return ctx.scene.step.go(0)
+    }
+    return ctx.scene.enter(USER_WAIT_LIKE_SCENE)
   }
 
-  @AddStep(4)
+  @AddStep(3)
   async onSeeLikes(@Ctx() ctx: MessageContext) {
     if (!ctx.scene.step.firstTime) {
       const {value, target} = ctx.messagePayload

@@ -74,7 +74,7 @@ export class ActionService {
     }
 
     const modifyCache = {
-      '__scene': {'current': ACTION_SCENE, 'firstTime': true, 'stepId': 4}
+      '__scene': {'current': ACTION_SCENE, 'firstTime': true, 'stepId': 3}
     }
     await this._cacheManager.set(`vk-io:session:${targetId}:${targetId}`, modifyCache)
 
