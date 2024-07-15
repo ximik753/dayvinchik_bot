@@ -10,6 +10,6 @@ import {VkExceptionFilter} from '../common'
 export default class UserUpdate {
   @Hears('/start')
   async start(@Ctx() ctx: MessageContext) {
-    await ctx.scene.enter(USER_QUESTIONNAIRE_CHANGING_SCENE, {state: {profile: {}}})
+    await ctx.scene.enter(USER_QUESTIONNAIRE_CHANGING_SCENE)
   }
 }
