@@ -33,15 +33,15 @@ export class UserQuestionnaireSettingsScene {
     }
 
     if (ctx.messagePayload.createNew) {
-      return ctx.scene.enter(USER_QUESTIONNAIRE_CHANGING_SCENE, {state: {profile: {}}})
+      return ctx.scene.enter(USER_QUESTIONNAIRE_CHANGING_SCENE)
     }
 
     if (ctx.messagePayload.changePhoto) {
-      return ctx.scene.enter(USER_QUESTIONNAIRE_CHANGING_SCENE, {state: {profile: ctx.scene.state.profile, step: 6}})
+      return ctx.scene.enter(USER_QUESTIONNAIRE_CHANGING_SCENE, {state: {step: 6}})
     }
 
     if (ctx.messagePayload.changeAbout) {
-      return ctx.scene.enter(USER_QUESTIONNAIRE_CHANGING_SCENE, {state: {profile: ctx.scene.state.profile, step: 5}})
+      return ctx.scene.enter(USER_QUESTIONNAIRE_CHANGING_SCENE, {state: {step: 5}})
     }
 
     if (ctx.messagePayload.search) {
