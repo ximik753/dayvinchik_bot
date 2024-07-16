@@ -3,6 +3,7 @@ import {ButtonColor, KeyboardBuilder, MessageContext} from 'vk-io'
 import {AddStep, Ctx, Scene} from 'nestjs-vk'
 
 import {USER_QUESTIONNAIRE_SETTINGS_SCENE, USER_QUESTIONNAIRE_CHANGING_SCENE} from '../user.constants'
+import {ACTION_SCENE} from '../../action/action.constats'
 import {VkExceptionFilter} from '../../common'
 
 @UseFilters(VkExceptionFilter)
@@ -45,7 +46,7 @@ export class UserQuestionnaireSettingsScene {
     }
 
     if (ctx.messagePayload.search) {
-      return ctx.send(`Функционал ещё не реализован`)
+      return ctx.scene.enter(ACTION_SCENE)
     }
   }
 }
