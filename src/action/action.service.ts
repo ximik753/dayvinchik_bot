@@ -4,6 +4,7 @@ import {CACHE_MANAGER} from '@nestjs/cache-manager'
 import {Inject, Injectable} from '@nestjs/common'
 import {InjectRepository} from '@nestjs/typeorm'
 import {InjectVkApi} from 'nestjs-vk'
+import {Cron} from '@nestjs/schedule'
 import {Repository} from 'typeorm'
 
 import {getNoun, getRandomNumber} from '../common'
@@ -193,5 +194,12 @@ export class ActionService {
       searchLikesText,
       likedText
     }
+  }
+
+  @Cron('0 1 * * *')
+  async clearActionHandleCron() {
+    await this._actionRepository.delete({
+      isReading: true
+    })
   }
 }

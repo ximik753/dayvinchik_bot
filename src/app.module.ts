@@ -3,6 +3,7 @@ import {ioRedisStore} from '@tirke/node-cache-manager-ioredis'
 import {ConfigModule, ConfigService} from '@nestjs/config'
 import {CacheModule} from '@nestjs/cache-manager'
 import {RedisStorage} from 'vk-io-redis-storage'
+import {ScheduleModule} from '@nestjs/schedule'
 import {SessionManager} from '@vk-io/session'
 import {TypeOrmModule} from '@nestjs/typeorm'
 import {VkModule} from 'nestjs-vk'
@@ -15,6 +16,7 @@ import {User} from './user/user.entity'
 @Global()
 @Module({
   imports: [
+    ScheduleModule.forRoot({}),
     ConfigModule.forRoot({isGlobal: true, envFilePath: '.env'}),
     CacheModule.register({
       store: ioRedisStore,
