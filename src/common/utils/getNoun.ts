@@ -1,15 +1,15 @@
 export function getNoun(number: number, one: String, two: String, five: String) {
-  let n = Math.abs(number);
-  n %= 100;
+  let n = Math.abs(number)
+  n %= 100
   if (n >= 5 && n <= 20) {
-    return five;
+    return five
   }
-  n %= 10;
+  n %= 10
   if (n === 1) {
-    return one;
+    return one
   }
   if (n >= 2 && n <= 4) {
-    return two;
+    return two
   }
-  return five;
+  return five
 }

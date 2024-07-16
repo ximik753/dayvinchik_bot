@@ -4,9 +4,9 @@ import {IStepContext} from '@vk-io/scenes'
 import {UseFilters} from '@nestjs/common'
 
 import {USER_QUESTIONNAIRE_CHANGING_SCENE, USER_QUESTIONNAIRE_SETTINGS_SCENE} from '../user.constants'
+import {capitalizeFirstLetter, VkExceptionFilter} from '../../common'
 import {ACTION_SCENE} from '../../action/action.constats'
 import {UserUpdateDto} from '../dto/user-update.dto'
-import {VkExceptionFilter} from '../../common'
 import {UserService} from '../user.service'
 import {SexType, User} from '../user.entity'
 
@@ -124,7 +124,7 @@ export class UserQuestionnaireChangingScene {
 
     const userDto = new UserUpdateDto()
     userDto.id = ctx.senderId
-    userDto.city = ctx.text
+    userDto.city = capitalizeFirstLetter(ctx.text!)
     await this._userService.update(userDto)
 
     await ctx.scene.step.next()
