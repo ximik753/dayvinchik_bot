@@ -131,6 +131,10 @@ export class ActionScene {
       .textButton({label: '❤', color: ButtonColor.POSITIVE, payload: {value: 0, target: like.id}})
       .textButton({label: '👎', color: ButtonColor.NEGATIVE, payload: {value: 1, target: like.id}})
 
+    const likeMessage = like.message
+      ? `Сообщение для тебя💌: ${like.message}`
+      : ''
+
     await ctx.sendPhotos(
       {value: like.photo!},
       {
@@ -138,6 +142,8 @@ export class ActionScene {
         Кому-то понравилась твоя анкета${hasMoreLike ? `(и ещё ${likesCount - 1})` : ''}:
         
         ${this._userService.getQuestionnaireText(like)}
+        
+        ${likeMessage}
         `,
         keyboard
       }
