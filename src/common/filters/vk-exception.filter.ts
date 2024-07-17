@@ -1,5 +1,6 @@
 import {ArgumentsHost, Catch, ExceptionFilter} from '@nestjs/common'
 import {VkArgumentsHost, VkException} from 'nestjs-vk'
+
 import {Context} from '../../interfaces/context.interface'
 
 @Catch()
@@ -8,6 +9,6 @@ export class VkExceptionFilter implements ExceptionFilter {
     const vkContext = VkArgumentsHost.create(host)
     const ctx = vkContext.getContext<Context>()
 
-    await ctx.send(`Error: ${exception.message}`)
+    await ctx.send(`Произошла ошибка. Попробуйте позже`)
   }
 }
