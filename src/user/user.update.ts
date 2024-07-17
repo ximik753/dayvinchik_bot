@@ -8,7 +8,7 @@ import {VkExceptionFilter} from '../common'
 @Update()
 @UseFilters(VkExceptionFilter)
 export default class UserUpdate {
-  @Hears('/start')
+  @Hears(/начать/gi)
   async start(@Ctx() ctx: MessageContext) {
     await ctx.scene.enter(USER_QUESTIONNAIRE_CHANGING_SCENE)
   }
