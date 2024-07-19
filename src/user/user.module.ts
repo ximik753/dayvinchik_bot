@@ -4,6 +4,7 @@ import {Module} from '@nestjs/common'
 import {UserQuestionnaireChangingScene} from './scenes/user-questionnaire-changing.scene'
 import {UserQuestionnaireSettingsScene} from './scenes/user-questionnaire-settings.scene'
 import {UserWaitLikeScene} from './scenes/user-wait-like.scene'
+import {Action} from '../action/action.entity'
 import {UserService} from './user.service'
 import UserUpdate from './user.update'
 import {User} from './user.entity'
@@ -16,7 +17,7 @@ import {User} from './user.entity'
     UserUpdate,
     UserService
   ],
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User, Action])],
   exports: [TypeOrmModule, UserService]
 })
 export class UserModule {}

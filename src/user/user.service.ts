@@ -13,6 +13,8 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private _userRepository: Repository<User>,
+    @InjectRepository(Action)
+    private _actionRepository: Repository<Action>,
     // @ts-ignore
     @InjectVkApi() private readonly vk: VK
   ) {}
@@ -39,14 +41,18 @@ export class UserService {
   async findForAction(ownerId: number, userForOwnerCity = true) {
     const currentUser = await this.findOneById(ownerId) as User
 
+    const subActionQuery = this._actionRepository
+      .createQueryBuilder('action')
+      .select('targetId')
+      .where(`ownerId = ${currentUser.id}`)
+
     return this._userRepository.createQueryBuilder('user')
-      .leftJoinAndSelect(Action, 'action', 'user.id = action.targetId')
-      .where('(user.sex = :sex OR 2 = :sex)', {sex: currentUser.sexSearch})
+      .where(`user.id not in (${subActionQuery.getQuery()})`)
+      .andWhere('(user.sex = :sex OR 2 = :sex)', {sex: currentUser.sexSearch})
       .andWhere(userForOwnerCity ? 'user.city = :city' : 'user.city != :city', {city: currentUser.city})
       .andWhere('user.id != :id', {id: currentUser.id})
-      .andWhere(':minAge <= user.age <= :maxAge', {minAge: currentUser.age! - 2, maxAge: currentUser.age! + 2})
+      .andWhere('user.age between :minAge AND :maxAge', {minAge: currentUser.age! - 3, maxAge: currentUser.age! + 3})
       .andWhere('user.isActive = true')
-      .andWhere('action.ownerId is null')
       .getMany()
   }
 

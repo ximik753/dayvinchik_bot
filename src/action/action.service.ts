@@ -116,6 +116,13 @@ export class ActionService {
       .execute()
   }
 
+  getUsersInteracted(userId: number) {
+    return this._actionRepository
+      .createQueryBuilder('action')
+      .select('targetId')
+      .where('ownerId = :userId', {userId: userId})
+  }
+
   /**
    * Послать взаимную симпатию
    * @param ownerId кто поставил взаимную симпатию
