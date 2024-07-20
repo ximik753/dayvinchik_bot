@@ -66,7 +66,8 @@ export class ActionService {
         ownerId,
         targetId,
         type,
-        message
+        message,
+        isReading: type === ActionType.DISLIKE
       })
     ])
 
