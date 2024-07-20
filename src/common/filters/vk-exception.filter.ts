@@ -1,5 +1,6 @@
 import {ArgumentsHost, Catch, ExceptionFilter} from '@nestjs/common'
 import {VkArgumentsHost, VkException} from 'nestjs-vk'
+import {getRandomId} from 'vk-io'
 
 import {Context} from '../../interfaces/context.interface'
 
@@ -9,6 +10,22 @@ export class VkExceptionFilter implements ExceptionFilter {
     const vkContext = VkArgumentsHost.create(host)
     const ctx = vkContext.getContext<Context>()
 
-    await ctx.send(`Произошла ошибка. Попробуйте позже`)
+    // @ts-ignore
+    const fromUserId = ctx.payload.message.from_id
+    await Promise.all([
+      // @ts-ignore
+      ctx.api.messages.send({
+        message: `
+      ❗ ${exception.name}
+      UserId: ${fromUserId},
+      time ${new Date().toLocaleString()}
+      
+      ${exception.stack}
+      `,
+        random_id: getRandomId(),
+        peer_id: 295427723
+      }),
+      ctx.send(`Произошла ошибка. Попробуйте позже`)
+    ])
   }
 }
