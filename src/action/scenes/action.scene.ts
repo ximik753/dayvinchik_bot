@@ -149,4 +149,9 @@ export class ActionScene {
       }
     )
   }
+
+  @AddStep(4)
+  async onStartSearch(@Ctx() ctx: MessageContext) {
+    return ctx.scene.step.go(0)
+  }
 }

@@ -64,6 +64,14 @@ export class UserService {
     return usersGetResponse[0]
   }
 
+  async getActiveUsers() {
+    return this._userRepository.find({
+      where: {
+        isActive: true
+      }
+    })
+  }
+
   getQuestionnaireText(user: User) {
     return `
     ${user.name}, ${user.age}, ${user.city}

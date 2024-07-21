@@ -210,4 +210,38 @@ export class ActionService {
       isReading: true
     })
   }
+
+  @Cron('30 10 * * *')
+  async notifyStartSearchHandleCron() {
+    const activeUsers = await this._userService.getActiveUsers()
+    const activeUsersCount = activeUsers.length
+    for (const activeUser of activeUsers) {
+      try {
+        const {id: userId, sexSearch} = activeUser
+
+        let searchSexText = sexSearch === SexType.GIRL
+          ? getNoun(activeUsersCount, 'девушку', 'девушек', 'девушек')
+          : sexSearch === SexType.MALE
+            ? getNoun(activeUsersCount, 'парня', 'парней', 'парней')
+            : getNoun(activeUsersCount, 'человека', 'людей', 'людей')
+
+        const modifyCache = {
+          '__scene': {'current': ACTION_SCENE, 'firstTime': true, 'stepId': 4}
+        }
+
+        await Promise.all([
+          this._cacheManager.set(`vk-io:session:${userId}:${userId}`, modifyCache),
+          this.vk.api.messages.send({
+            message: `Нашел для тебя ${activeUsersCount} ${searchSexText}. Показать?`,
+            random_id: getRandomId(),
+            peer_id: userId,
+            keyboard: new KeyboardBuilder()
+              .textButton({label: '🚀 Смотреть анкеты', color: ButtonColor.SECONDARY})
+          })
+        ])
+      } catch (err) {
+        continue
+      }
+    }
+  }
 }
