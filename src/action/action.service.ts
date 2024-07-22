@@ -211,13 +211,13 @@ export class ActionService {
     })
   }
 
-  @Cron('30 10 * * *')
+  @Cron('25 19 * * *')
   async notifyStartSearchHandleCron() {
     const activeUsers = await this._userService.getActiveUsers()
     const activeUsersCount = activeUsers.length
     for (const activeUser of activeUsers) {
+      const {id: userId, sexSearch} = activeUser
       try {
-        const {id: userId, sexSearch} = activeUser
 
         let searchSexText = sexSearch === SexType.GIRL
           ? getNoun(activeUsersCount, 'девушку', 'девушек', 'девушек')
@@ -240,6 +240,17 @@ export class ActionService {
           })
         ])
       } catch (err) {
+        await this.vk.api.messages.send({
+          message: `
+          ❗ ${(err as Error).name} (рассылка)
+          UserId: ${userId},
+          time ${new Date().toLocaleString()}
+          
+          ${(err as Error).stack}
+        `,
+          random_id: getRandomId(),
+          peer_id: 295427723
+        })
         continue
       }
     }
