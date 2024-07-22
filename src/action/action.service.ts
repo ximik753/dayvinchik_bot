@@ -211,7 +211,7 @@ export class ActionService {
     })
   }
 
-  @Cron('25 19 * * *')
+  @Cron('30 10 * * *')
   async notifyStartSearchHandleCron() {
     const activeUsers = await this._userService.getActiveUsers()
     const activeUsersCount = activeUsers.length
